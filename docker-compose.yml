@@ -1,0 +1,116 @@
+version: '3.8'
+
+services:
+  # MySQL 数据库
+  mysql:
+    image: mysql:8.0
+    container_name: lingecho-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: lingecho
+      MYSQL_USER: lingecho
+      MYSQL_PASSWORD: lingecho123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - lingecho-network
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: lingecho-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - lingecho-network
+
+  # Eureka Server
+  eureka-server:
+    build:
+      context: ./lingecho-eureka-server
+      dockerfile: Dockerfile
+    container_name: lingecho-eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - lingecho-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./lingecho-api-gateway
+      dockerfile: Dockerfile
+    container_name: lingecho-api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+    networks:
+      - lingecho-network
+
+  # Auth Service
+  auth-service:
+    build:
+      context: ./lingecho-auth-service
+      dockerfile: Dockerfile
+    container_name: lingecho-auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/lingecho
+      - SPRING_DATASOURCE_USERNAME=lingecho
+      - SPRING_DATASOURCE_PASSWORD=lingecho123
+      - SPRING_REDIS_HOST=redis
+    depends_on:
+      - mysql
+      - redis
+      - eureka-server
+    networks:
+      - lingecho-network
+
+  # User Service
+  user-service:
+    build:
+      context: ./lingecho-user-service
+      dockerfile: Dockerfile
+    container_name: lingecho-user-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/lingecho
+      - SPRING_DATASOURCE_USERNAME=lingecho
+      - SPRING_DATASOURCE_PASSWORD=lingecho123
+      - SPRING_REDIS_HOST=redis
+    depends_on:
+      - mysql
+      - redis
+      - eureka-server
+    networks:
+      - lingecho-network
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  lingecho-network:
+    driver: bridge
+

@@ -1,0 +1,89 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: lingecho-api-gateway
+  cloud:
+    gateway:
+      routes:
+        # 认证服务
+        - id: auth-service
+          uri: lb://lingecho-auth-service
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=1
+        # 用户服务
+        - id: user-service
+          uri: lb://lingecho-user-service
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - StripPrefix=1
+        # 助手服务
+        - id: assistant-service
+          uri: lb://lingecho-assistant-service
+          predicates:
+            - Path=/api/assistants/**
+          filters:
+            - StripPrefix=1
+        # 语音服务
+        - id: voice-service
+          uri: lb://lingecho-voice-service
+          predicates:
+            - Path=/api/voice/**
+          filters:
+            - StripPrefix=1
+        # 知识库服务
+        - id: knowledge-service
+          uri: lb://lingecho-knowledge-service
+          predicates:
+            - Path=/api/knowledge/**
+          filters:
+            - StripPrefix=1
+        # 计费服务
+        - id: billing-service
+          uri: lb://lingecho-billing-service
+          predicates:
+            - Path=/api/billing/**
+          filters:
+            - StripPrefix=1
+        # 告警服务
+        - id: alert-service
+          uri: lb://lingecho-alert-service
+          predicates:
+            - Path=/api/alerts/**
+          filters:
+            - StripPrefix=1
+        # 设备服务
+        - id: device-service
+          uri: lb://lingecho-device-service
+          predicates:
+            - Path=/api/devices/**
+          filters:
+            - StripPrefix=1
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+
