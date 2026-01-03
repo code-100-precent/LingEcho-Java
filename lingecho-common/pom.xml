@@ -16,8 +16,6 @@
 
     <modules>
         <module>lingecho-common-core</module>
-        <module>lingecho-common-web</module>
-        <module>lingecho-common-db</module>
     </modules>
 </project>
 

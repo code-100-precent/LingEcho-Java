@@ -1,11 +1,14 @@
 package com.lingecho.assistant.controller;
 
-import com.lingecho.common.core.result.Result;
-import lombok.Data;
+import com.lingecho.assistant.dto.CreateAssistantRequest;
+import com.lingecho.assistant.dto.UpdateAssistantRequest;
+import com.lingecho.assistant.entity.Assistant;
+import com.lingecho.assistant.service.AssistantService;
+import com.lingecho.common.core.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,84 +19,55 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AssistantController {
 
+    private final AssistantService assistantService;
+
+    /**
+     * 获取助手列表
+     */
     @GetMapping
-    public Result<List<AssistantDTO>> listAssistants() {
-        // TODO: 实现助手列表查询
-        List<AssistantDTO> assistants = new ArrayList<>();
-        return Result.success(assistants);
+    public ApiResponse<List<Assistant>> listAssistants(@RequestHeader("X-User-Id") Long userId) {
+        return assistantService.listAssistants(userId);
     }
 
+    /**
+     * 获取助手详情
+     */
     @GetMapping("/{id}")
-    public Result<AssistantDTO> getAssistant(@PathVariable Long id) {
-        // TODO: 实现助手详情查询
-        AssistantDTO assistant = new AssistantDTO();
-        assistant.setId(id);
-        return Result.success(assistant);
+    public ApiResponse<Assistant> getAssistant(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Id") Long userId) {
+        return assistantService.getAssistant(id, userId);
     }
 
+    /**
+     * 创建助手
+     */
     @PostMapping
-    public Result<AssistantDTO> createAssistant(@RequestBody CreateAssistantRequest request) {
-        // TODO: 实现助手创建
-        AssistantDTO assistant = new AssistantDTO();
-        return Result.success(assistant);
+    public ApiResponse<Assistant> createAssistant(
+            @RequestHeader("X-User-Id") Long userId,
+            @Valid @RequestBody CreateAssistantRequest request) {
+        return assistantService.createAssistant(userId, request);
     }
 
+    /**
+     * 更新助手
+     */
     @PutMapping("/{id}")
-    public Result<AssistantDTO> updateAssistant(@PathVariable Long id, @RequestBody UpdateAssistantRequest request) {
-        // TODO: 实现助手更新
-        AssistantDTO assistant = new AssistantDTO();
-        return Result.success(assistant);
+    public ApiResponse<Assistant> updateAssistant(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Id") Long userId,
+            @RequestBody UpdateAssistantRequest request) {
+        return assistantService.updateAssistant(id, userId, request);
     }
 
+    /**
+     * 删除助手
+     */
     @DeleteMapping("/{id}")
-    public Result<Void> deleteAssistant(@PathVariable Long id) {
-        // TODO: 实现助手删除
-        return Result.success();
-    }
-
-    @PostMapping("/{id}/chat")
-    public Result<ChatResponse> chat(@PathVariable Long id, @RequestBody ChatRequest request) {
-        // TODO: 实现聊天功能
-        ChatResponse response = new ChatResponse();
-        response.setMessage("This is a mock response");
-        return Result.success(response);
-    }
-
-    @Data
-    static class AssistantDTO {
-        private Long id;
-        private String name;
-        private String description;
-        private String model;
-        private String systemPrompt;
-    }
-
-    @Data
-    static class CreateAssistantRequest {
-        private String name;
-        private String description;
-        private String model;
-        private String systemPrompt;
-    }
-
-    @Data
-    static class UpdateAssistantRequest {
-        private String name;
-        private String description;
-        private String model;
-        private String systemPrompt;
-    }
-
-    @Data
-    static class ChatRequest {
-        private String message;
-        private String conversationId;
-    }
-
-    @Data
-    static class ChatResponse {
-        private String message;
-        private String conversationId;
+    public ApiResponse<Void> deleteAssistant(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Id") Long userId) {
+        return assistantService.deleteAssistant(id, userId);
     }
 }
 

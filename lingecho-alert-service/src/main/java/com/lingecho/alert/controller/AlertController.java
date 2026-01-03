@@ -1,11 +1,12 @@
 package com.lingecho.alert.controller;
 
-import com.lingecho.common.core.result.Result;
-import lombok.Data;
+import com.lingecho.alert.entity.Alert;
+import com.lingecho.alert.entity.AlertRule;
+import com.lingecho.alert.service.AlertService;
+import com.lingecho.common.core.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,52 +17,45 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AlertController {
 
+    private final AlertService alertService;
+
+    /**
+     * 获取用户告警列表
+     */
     @GetMapping
-    public Result<List<AlertDTO>> listAlerts() {
-        // TODO: 实现告警列表查询
-        List<AlertDTO> alerts = new ArrayList<>();
-        return Result.success(alerts);
+    public ApiResponse<List<Alert>> listAlerts(
+            @RequestHeader("X-User-Id") Long userId,
+            @RequestParam(required = false) String status) {
+        return alertService.getUserAlerts(userId, status);
     }
 
-    @PostMapping
-    public Result<AlertDTO> createAlert(@RequestBody CreateAlertRequest request) {
-        // TODO: 实现告警创建
-        AlertDTO alert = new AlertDTO();
-        return Result.success(alert);
+    /**
+     * 更新告警状态
+     */
+    @PutMapping("/{id}/status")
+    public ApiResponse<Alert> updateAlertStatus(
+            @RequestHeader("X-User-Id") Long userId,
+            @PathVariable Long id,
+            @RequestParam String status) {
+        return alertService.updateAlertStatus(userId, id, status);
     }
 
-    @PutMapping("/{id}")
-    public Result<AlertDTO> updateAlert(@PathVariable Long id, @RequestBody UpdateAlertRequest request) {
-        // TODO: 实现告警更新
-        AlertDTO alert = new AlertDTO();
-        return Result.success(alert);
+    /**
+     * 创建告警规则
+     */
+    @PostMapping("/rules")
+    public ApiResponse<AlertRule> createAlertRule(
+            @RequestHeader("X-User-Id") Long userId,
+            @RequestBody AlertRule rule) {
+        return alertService.createAlertRule(userId, rule);
     }
 
-    @DeleteMapping("/{id}")
-    public Result<Void> deleteAlert(@PathVariable Long id) {
-        // TODO: 实现告警删除
-        return Result.success();
-    }
-
-    @Data
-    static class AlertDTO {
-        private Long id;
-        private String name;
-        private String rule;
-        private String status;
-    }
-
-    @Data
-    static class CreateAlertRequest {
-        private String name;
-        private String rule;
-    }
-
-    @Data
-    static class UpdateAlertRequest {
-        private String name;
-        private String rule;
-        private String status;
+    /**
+     * 获取告警规则列表
+     */
+    @GetMapping("/rules")
+    public ApiResponse<List<AlertRule>> getAlertRules(@RequestHeader("X-User-Id") Long userId) {
+        return alertService.getAlertRules(userId);
     }
 }
 

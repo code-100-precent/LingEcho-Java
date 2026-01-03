@@ -17,10 +17,8 @@
         <module>lingecho-common</module>
         <module>lingecho-eureka-server</module>
         <module>lingecho-api-gateway</module>
-        <module>lingecho-auth-service</module>
         <module>lingecho-user-service</module>
         <module>lingecho-assistant-service</module>
-        <module>lingecho-voice-service</module>
         <module>lingecho-knowledge-service</module>
         <module>lingecho-billing-service</module>
         <module>lingecho-alert-service</module>
@@ -35,6 +33,15 @@
         <spring-boot.version>3.2.0</spring-boot.version>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
         <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
+        <guava.version>32.1.2-jre</guava.version>
+        <mybatis-plus.version>3.5.2</mybatis-plus.version>
+        <minio.version>8.5.3</minio.version>
+        <lucene.version>8.11.2</lucene.version>
+        <hibiscus.signal.version>1.0.5</hibiscus.signal.version>
+        <hutool.version>5.8.8</hutool.version>
+        <common.io.version>2.11.0</common.io.version>
+        <common.codec.version>1.15</common.codec.version>
+        <j256.version>1.17</j256.version>
     </properties>
 
     <dependencyManagement>
@@ -62,6 +69,125 @@
                 <version>${spring-cloud-alibaba.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- guava -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <!-- Jackson 用于 Redis JSON 序列化 -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.15.2</version>
+            </dependency>
+            <!-- Jackson Module -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-parameter-names</artifactId>
+                <version>2.15.2</version>
+            </dependency>
+            <!-- MyBatis Plus -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <!-- minio -->
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.squareup.okhttp3</groupId>
+                        <artifactId>okhttp</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- Lucene Core -->
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-core</artifactId>
+                <version>${lucene.version}</version>
+            </dependency>
+
+            <!-- Lucene Analyzers -->
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-analyzers-common</artifactId>
+                <version>${lucene.version}</version>
+            </dependency>
+
+            <!-- Lucene Query Parser -->
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-queryparser</artifactId>
+                <version>${lucene.version}</version>
+            </dependency>
+
+            <!-- Lucene Suggest -->
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-suggest</artifactId>
+                <version>${lucene.version}</version>
+            </dependency>
+
+            <!-- Lucene Highlighter -->
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-highlighter</artifactId>
+                <version>${lucene.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/com.jianggujin/IKAnalyzer-lucene -->
+            <dependency>
+                <groupId>com.jianggujin</groupId>
+                <artifactId>IKAnalyzer-lucene</artifactId>
+                <version>8.0.0</version>
+            </dependency>
+
+            <!-- hutool -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <!-- hibiscus-signal -->
+            <dependency>
+                <groupId>io.github.heathcetide</groupId>
+                <artifactId>cetide.hibiscus.signal</artifactId>
+                <version>${hibiscus.signal.version}</version>
+            </dependency>
+
+            <!-- common io -->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${common.io.version}</version>
+            </dependency>
+
+            <!-- common codec -->
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${common.codec.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.12.0</version>
+            </dependency>
+
+            <!-- simplemagic -->
+            <dependency>
+                <groupId>com.j256.simplemagic</groupId>
+                <artifactId>simplemagic</artifactId>
+                <version>${j256.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

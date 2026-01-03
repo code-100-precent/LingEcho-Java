@@ -1,76 +1,88 @@
 package com.lingecho.user.controller;
 
-import com.lingecho.common.core.result.Result;
-import lombok.Data;
+import com.lingecho.common.core.ApiResponse;
+import com.lingecho.user.dto.UpdateUserRequest;
+import com.lingecho.user.models.dto.RegisterUserForm;
+import com.lingecho.user.models.entity.User;
+import com.lingecho.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 /**
  * 用户控制器
  */
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class UserController {
 
-    @GetMapping
-    public Result<List<UserDTO>> listUsers() {
-        // TODO: 实现用户列表查询
-        List<UserDTO> users = new ArrayList<>();
-        return Result.success(users);
+    private final UserService userService;
+
+    @PostMapping("/register")
+    public ApiResponse<Void> handleUserSignup(@RequestBody RegisterUserForm registerUserForm){
+        return ApiResponse.success();
     }
 
-    @GetMapping("/{id}")
-    public Result<UserDTO> getUser(@PathVariable Long id) {
-        // TODO: 实现用户详情查询
-        UserDTO user = new UserDTO();
-        user.setId(id);
-        return Result.success(user);
+    /**
+     * 获取当前用户信息
+     */
+    @GetMapping("/me")
+    public ApiResponse<User> getCurrentUser(@RequestHeader("X-User-Id") Long userId) {
+        return userService.getUserInfo(userId);
     }
 
-    @PostMapping
-    public Result<UserDTO> createUser(@RequestBody CreateUserRequest request) {
-        // TODO: 实现用户创建
-        UserDTO user = new UserDTO();
-        return Result.success(user);
+    /**
+     * 更新用户信息
+     */
+    @PutMapping("/me")
+    public ApiResponse<User> updateCurrentUser(
+            @RequestHeader("X-User-Id") Long userId,
+            @RequestBody UpdateUserRequest request) {
+        return userService.updateUser(userId, request);
     }
 
-    @PutMapping("/{id}")
-    public Result<UserDTO> updateUser(@PathVariable Long id, @RequestBody UpdateUserRequest request) {
-        // TODO: 实现用户更新
-        UserDTO user = new UserDTO();
-        return Result.success(user);
+    /**
+     * 更新用户偏好设置
+     */
+    @PutMapping("/me/preferences")
+    public ApiResponse<User> updatePreferences(
+            @RequestHeader("X-User-Id") Long userId,
+            @RequestBody Map<String, String> preferences) {
+        return userService.updatePreferences(userId, preferences);
     }
 
-    @DeleteMapping("/{id}")
-    public Result<Void> deleteUser(@PathVariable Long id) {
-        // TODO: 实现用户删除
-        return Result.success();
+    /**
+     * 更新通知设置
+     */
+    @PutMapping("/me/notification-settings")
+    public ApiResponse<User> updateNotificationSettings(
+            @RequestHeader("X-User-Id") Long userId,
+            @RequestBody Map<String, Boolean> settings) {
+        return userService.updateNotificationSettings(userId, settings);
     }
 
-    @Data
-    static class UserDTO {
-        private Long id;
-        private String username;
-        private String email;
-        private String avatar;
+    /**
+     * 获取用户统计信息
+     */
+    @GetMapping("/me/stats")
+    public ApiResponse<Map<String, Object>> getUserStats(@RequestHeader("X-User-Id") Long userId) {
+        return userService.getUserStats(userId);
     }
 
-    @Data
-    static class CreateUserRequest {
-        private String username;
-        private String email;
-        private String password;
-    }
-
-    @Data
-    static class UpdateUserRequest {
-        private String username;
-        private String email;
-        private String avatar;
+    /**
+     * 上传头像
+     */
+    @PostMapping("/me/avatar")
+    public ApiResponse<User> uploadAvatar(
+            @RequestHeader("X-User-Id") Long userId,
+            @RequestBody Map<String, String> request) {
+        String avatarUrl = request.get("avatarUrl");
+        if (avatarUrl == null || avatarUrl.isEmpty()) {
+            return ApiResponse.error("头像URL不能为空");
+        }
+        return userService.uploadAvatar(userId, avatarUrl);
     }
 }
 

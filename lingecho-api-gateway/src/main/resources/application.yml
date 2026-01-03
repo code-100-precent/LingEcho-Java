@@ -60,7 +60,7 @@ spring:
         - id: device-service
           uri: lb://lingecho-device-service
           predicates:
-            - Path=/api/devices/**
+            - Path=/api/device/**
           filters:
             - StripPrefix=1
       globalcors:

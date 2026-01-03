@@ -1,12 +1,13 @@
 package com.lingecho.billing.controller;
 
-import com.lingecho.common.core.result.Result;
-import lombok.Data;
+import com.lingecho.billing.service.BillingService;
+import com.lingecho.common.core.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 /**
  * 计费控制器
@@ -16,48 +17,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BillingController {
 
-    @GetMapping("/usage")
-    public Result<List<UsageDTO>> getUsage(@RequestParam(required = false) Long userId) {
-        // TODO: 实现使用量查询
-        List<UsageDTO> usage = new ArrayList<>();
-        return Result.success(usage);
-    }
+    private final BillingService billingService;
 
-    @GetMapping("/bills")
-    public Result<List<BillDTO>> getBills(@RequestParam(required = false) Long userId) {
-        // TODO: 实现账单查询
-        List<BillDTO> bills = new ArrayList<>();
-        return Result.success(bills);
-    }
-
-    @GetMapping("/quotas")
-    public Result<List<QuotaDTO>> getQuotas(@RequestParam(required = false) Long userId) {
-        // TODO: 实现配额查询
-        List<QuotaDTO> quotas = new ArrayList<>();
-        return Result.success(quotas);
-    }
-
-    @Data
-    static class UsageDTO {
-        private String service;
-        private Long count;
-        private Long amount;
-    }
-
-    @Data
-    static class BillDTO {
-        private Long id;
-        private Long userId;
-        private String period;
-        private Double amount;
-        private String status;
-    }
-
-    @Data
-    static class QuotaDTO {
-        private String service;
-        private Long used;
-        private Long total;
+    /**
+     * 获取使用统计
+     */
+    @GetMapping("/usage/statistics")
+    public ApiResponse<Map<String, Object>> getUsageStatistics(
+            @RequestHeader("X-User-Id") Long userId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime,
+            @RequestParam(required = false) Long credentialId,
+            @RequestParam(required = false) Long groupId) {
+        return billingService.getUsageStatistics(userId, startTime, endTime, credentialId, groupId);
     }
 }
 

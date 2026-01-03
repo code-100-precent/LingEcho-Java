@@ -16,12 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>com.lingecho</groupId>
-            <artifactId>lingecho-common-web</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.lingecho</groupId>
-            <artifactId>lingecho-common-db</artifactId>
+            <artifactId>lingecho-common-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
